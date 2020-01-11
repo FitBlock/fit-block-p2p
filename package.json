@@ -1,0 +1,35 @@
+{
+  "name": "fit-block-p2p",
+  "version": "1.0.0",
+  "description": "FitBlock's p2p component。",
+  "main": "build/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "prepare": "npx tsc",
+    "build": "npx tsc",
+    "test": "node ./build/test/index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/FitBlock/fit-block-p2p.git"
+  },
+  "keywords": [
+    "fit",
+    "block",
+    "fit-block",
+    "bitcoin",
+    "btc",
+    "p2p"
+  ],
+  "author": "zy445566",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FitBlock/fit-block-p2p/issues"
+  },
+  "homepage": "https://github.com/FitBlock/fit-block-p2p#readme",
+  "devDependencies": {
+    "typescript": "^3.7.4"
+  }
+}

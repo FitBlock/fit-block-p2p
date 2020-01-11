@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target":"ESNext",
+        "outDir": "./build/"
+    },
+    "include": [
+        "db/**/*",
+        "types/**/*",
+        "test/**/*",
+        "p2pFactory.ts",
+        "index.ts"
+    ]
+}
