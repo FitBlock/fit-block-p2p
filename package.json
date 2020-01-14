@@ -31,5 +31,8 @@
   "homepage": "https://github.com/FitBlock/fit-block-p2p#readme",
   "devDependencies": {
     "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "ip-parse": "^1.0.1"
   }
 }
