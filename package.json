@@ -29,10 +29,11 @@
     "url": "https://github.com/FitBlock/fit-block-p2p/issues"
   },
   "homepage": "https://github.com/FitBlock/fit-block-p2p#readme",
-  "devDependencies": {
-    "typescript": "^3.7.4"
-  },
   "dependencies": {
     "ip-parse": "^1.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.4",
+    "@types/node": "^12.12.14"
   }
 }
