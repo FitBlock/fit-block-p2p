@@ -21,7 +21,7 @@ class IpTool {
     
     getNumberListByRedix(numList:Array<number>, redix:number):Array<number> {
         for(let i=numList.length-1;i>=0;i--) {
-            if(numList[i]>redix || numList[i]<0) {
+            if(numList[i]>=redix || numList[i]<0) {
                 const nextAdd = Math.floor(numList[i]/redix);
                 numList[i] -= (nextAdd*redix);
                 if(i<=0){return [];}
@@ -34,13 +34,13 @@ class IpTool {
     offsetIpv4ByData(ipData:Array<number>,offest:number):Array<number> {
         const nextIpData = [...ipData];
         nextIpData[nextIpData.length-1]+=offest;
-        return this.getNumberListByRedix(nextIpData, (2**8)-1);
+        return this.getNumberListByRedix(nextIpData, 2**8);
     }
     
     offsetIpv6ByData(ipData:Array<number>,offest:number):Array<number> {
         const nextIpData = [...ipData];
         nextIpData[nextIpData.length-1]+=offest;
-        return this.getNumberListByRedix(nextIpData, (2**16)-1);
+        return this.getNumberListByRedix(nextIpData, 2**16);
     }
 }
 export const ipTool =  new IpTool();
