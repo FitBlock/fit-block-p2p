@@ -9,6 +9,17 @@ const testUnit = {
        }
        ok(ipList.length>=1, 'test.getSelfIp error!')
     },
+    [Symbol('test.ipIterator')] : async function() {
+        const ipIterator = await fitBlockP2p.ipIterator('255.255.255.255');
+        for await (const ip of ipIterator) {
+            console.log(ip)
+            await new Promise((reslove)=>{
+                setTimeout(()=>{
+                    reslove(true)
+                },1000)
+            })
+        }
+     },
 }
 
 

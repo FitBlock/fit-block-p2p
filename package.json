@@ -33,6 +33,6 @@
     "typescript": "^3.7.4"
   },
   "dependencies": {
-    "ip-parse": "^1.0.1"
+    "ip-parse": "^1.0.5"
   }
 }
