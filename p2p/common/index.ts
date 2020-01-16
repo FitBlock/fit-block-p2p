@@ -21,8 +21,7 @@ export default class p2pCommom extends p2pBase {
         const nodeList=[];
         const ipRange = ipTool.getIpRange(ip,config.findNodeRange);
         await ipTool.eachIpByRange(ip,ipRange,async (ip)=>{
-            // to do
-            // this.pingNode()
+            await this.getClient().conect(ip);
             nodeList.push(ip)
         })
         return nodeList;
@@ -63,7 +62,10 @@ export default class p2pCommom extends p2pBase {
         const selfIpList = this.getSelfIp();
         while(true) {
             for(const selfIp of selfIpList) {
-
+                const nodeIpList = await this.findNode(selfIp);
+                for(const nodeIp of nodeIpList) {
+                    await this.joinNode(nodeIp)
+                }
             }
         }
     }
