@@ -82,7 +82,7 @@ class IpTool {
                 if(this.isIpEqual(ipValue,ipRange[0])){break;}
             }
         }
-        await Promise.all([ipIteratorFunc,ipIteratorReverseFunc])
+        await Promise.all([ipIteratorFunc(),ipIteratorReverseFunc()])
     }
 
     async ipIterator(ip:string , isReverse= false): Promise<AsyncIterable<string>> {
