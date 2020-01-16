@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package p2p;
+
+service P2p {
+  rpc ping (isOk) returns (isOk) {}
+}
+
+message isOk {
+  bool ok = 1;
+}

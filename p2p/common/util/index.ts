@@ -42,5 +42,67 @@ class IpTool {
         nextIpData[nextIpData.length-1]+=offest;
         return this.getNumberListByRedix(nextIpData, 2**16);
     }
+
+    getOffsetIpByDataFuncName(ip:string):string {
+        return this.isIpv6(ip)?'offsetIpv6ByData':'offsetIpv4ByData';
+    }
+
+    isIpEqual(ip:string,otherIp:string):boolean {
+        return ipParse.parseIp(ip).join(',') === ipParse.parseIp(otherIp).join(',')
+    }
+
+    getIpRange(ip:string, offset:number):Array<string> {
+        let minIp = this.isIpv6(ip)?'::':'0.0.0.0';
+        let maxIp = this.isIpv6(ip)?'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff':'255.255.255.255';
+        const ipData = this.getIpDateByIp(ip);
+        const offsetIpByDataFuncName = this.getOffsetIpByDataFuncName(ip);
+        const minIpData = this[offsetIpByDataFuncName](ipData, -offset);
+        const maxIpData = this[offsetIpByDataFuncName](ipData, offset);
+        if(minIpData.length!==0) {
+            minIp = this.getIpByIpDate(minIpData)
+        }
+        if(maxIpData.length!==0) {
+            maxIp = this.getIpByIpDate(maxIpData)
+        }
+        return [minIp,maxIp]
+    }
+
+    async eachIpByRange(ip:string,ipRange:Array<string>,callback:(ip:string)=>Promise<void>) {
+        const ipIterator = await ipTool.ipIterator(ip);
+        const ipIteratorReverse = await ipTool.ipIterator(ip, true);
+        const ipIteratorFunc = async ()=>{
+            for await (const ipValue of ipIterator) {
+                await callback(ipValue);
+                if(this.isIpEqual(ipValue,ipRange[1])){break;}
+            }
+        }
+        const ipIteratorReverseFunc = async ()=>{
+            for await (const ipValue of ipIteratorReverse) {
+                await callback(ipValue);
+                if(this.isIpEqual(ipValue,ipRange[0])){break;}
+            }
+        }
+        await Promise.all([ipIteratorFunc,ipIteratorReverseFunc])
+    }
+
+    async ipIterator(ip:string , isReverse= false): Promise<AsyncIterable<string>> {
+        const ipData = this.getIpDateByIp(ip);
+        const offsetIpByDataFuncName = this.getOffsetIpByDataFuncName(ip);
+        let nextIpData = ipData;
+        const offset = isReverse?-1:1;
+        return {
+            [Symbol.asyncIterator]:()=> {
+                return {
+                    next:async ()=>{
+                        nextIpData = this[offsetIpByDataFuncName](nextIpData, offset);
+                        if(nextIpData.length===0) {
+                            return {value:undefined, done: true}
+                        }
+                        return {value:this.getIpByIpDate(nextIpData), done: false}
+                    }
+                }
+            }
+        }
+    }
 }
 export const ipTool =  new IpTool();

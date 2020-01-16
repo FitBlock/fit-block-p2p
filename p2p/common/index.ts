@@ -1,34 +1,45 @@
 import p2pBase from '../../types/p2pBase';
 import {networkInterfaces} from 'os';
-import config from './config';
 import {ipTool} from './util'
+import Client from './Client';
+import Server from './Server';
+import config from './config';
 export default class p2pCommom extends p2pBase {
     getConfig() {
         return config;
     }
-    async ipIterator(ip:string , isReverse= false): Promise<AsyncIterable<string>> {
-        const ipData = ipTool.getIpDateByIp(ip);
-        const offsetIpByDataFuncName = 
-            ipTool.isIpv6(ip)?'offsetIpv6ByData':'offsetIpv4ByData';
-        let nextIpData = ipData;
-        const offset = isReverse?-1:1;
-        return {
-            [Symbol.asyncIterator]:()=> {
-                return {
-                    next:async ()=>{
-                        nextIpData = ipTool[offsetIpByDataFuncName](nextIpData, offset);
-                        if(nextIpData.length===0) {
-                            return {value:undefined, done: true}
-                        }
-                        return {value:ipTool.getIpByIpDate(nextIpData), done: false}
-                    }
-                }
-            }
-        }
-    }
+
     loadBootstrap():Array<string> {
         throw new Error('mothed not implement!')
     }
+
+    async ipIterator(ip:string , isReverse= false) {
+        return await ipTool.ipIterator(ip, isReverse);
+    }
+
+    async findNode(ip:string):Promise<Array<string>> {
+        const nodeList=[];
+        const ipRange = ipTool.getIpRange(ip,config.findNodeRange);
+        await ipTool.eachIpByRange(ip,ipRange,async (ip)=>{
+            // to do
+            // this.pingNode()
+            nodeList.push(ip)
+        })
+        return nodeList;
+    }
+    
+    async joinNode(ip:string):Promise<void>{
+        throw new Error('mothed not implement!')
+    }
+
+    getServer():Server {
+        return new Server();
+    }
+
+    getClient():Client {
+        return new Client();
+    }
+
     getSelfIp():Array<string> {
         const networkData = networkInterfaces();
         const ipList = []; 
@@ -40,5 +51,20 @@ export default class p2pCommom extends p2pBase {
             }
         }
         return ipList;
+    }
+
+    async run():Promise<void> {
+        const server = this.getServer();
+        await server.listen();
+        const bootstrapList = this.loadBootstrap();
+        for(const bootstrap of bootstrapList) {
+            await this.joinNode(bootstrap)
+        }
+        const selfIpList = this.getSelfIp();
+        while(true) {
+            for(const selfIp of selfIpList) {
+
+            }
+        }
     }
 }

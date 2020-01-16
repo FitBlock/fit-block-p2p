@@ -30,6 +30,8 @@
   },
   "homepage": "https://github.com/FitBlock/fit-block-p2p#readme",
   "dependencies": {
+    "@grpc/proto-loader": "^0.5.3",
+    "grpc": "^1.24.2",
     "ip-parse": "^1.0.5"
   },
   "devDependencies": {
