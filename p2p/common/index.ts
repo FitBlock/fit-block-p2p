@@ -3,14 +3,18 @@ import {networkInterfaces} from 'os';
 import {ipTool} from './util'
 import Client from './Client';
 import Server from './Server';
+import Node from './Node';
+const myNode = new Node();
 import config from './config';
 export default class p2pCommom extends p2pBase {
     getConfig() {
         return config;
     }
 
-    loadBootstrap():Array<string> {
-        throw new Error('mothed not implement!')
+    async loadBootstrap():Promise<Array<string>> {
+        const bootstrapList = await myNode.getBootstrapData();
+        bootstrapList.push(...config.defaultBootstrap);
+        return bootstrapList
     }
 
     async ipIterator(ip:string , isReverse= false) {
@@ -55,7 +59,7 @@ export default class p2pCommom extends p2pBase {
     async run():Promise<void> {
         const server = this.getServer();
         await server.listen();
-        const bootstrapList = this.loadBootstrap();
+        const bootstrapList = await this.loadBootstrap();
         for(const bootstrap of bootstrapList) {
             await this.joinNode(bootstrap)
         }
