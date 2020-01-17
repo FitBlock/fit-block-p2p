@@ -1,4 +1,6 @@
 import blockCore from 'fit-block-core';
+import Client from './Client';
+import Server from './Server';
 const myStore = blockCore.getStore()
 export default class Node {
     getBootstrapKey(): string {
@@ -11,6 +13,23 @@ export default class Node {
 
     async getBootstrapData():Promise<Array<string>> {
         return JSON.parse(await myStore.get(this.getBootstrapKey()))
+    }
+
+    async joinNode(ip:string):Promise<void> {
+        const client = this.getClient()
+        await client.conect(ip)
+        //todo
+        // await client.syncBootstrap()
+        // await client.syncBlock()
+        // await client.syncTransaction()
+    }
+
+    getServer():Server {
+        return new Server();
+    }
+
+    getClient():Client {
+        return new Client();
     }
 
 }

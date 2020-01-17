@@ -32,15 +32,15 @@ export default class p2pCommom extends p2pBase {
     }
     
     async joinNode(ip:string):Promise<void>{
-        throw new Error('mothed not implement!')
+        await myNode.joinNode(ip)
     }
 
     getServer():Server {
-        return new Server();
+        return myNode.getServer();
     }
 
     getClient():Client {
-        return new Client();
+        return myNode.getClient();
     }
 
     getSelfIp():Array<string> {

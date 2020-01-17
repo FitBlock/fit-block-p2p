@@ -4,8 +4,33 @@ package p2p;
 
 service P2p {
   rpc ping (isOk) returns (isOk) {}
+  rpc syncBootstrap (ipList) returns (ipList) {}
+  rpc syncBlock (blockHash) returns (blockData) {}
+  rpc syncTransaction(isOk) returns (transactionList) {}
 }
 
 message isOk {
   bool ok = 1;
+}
+message Ip {
+  string ip = 1;
+}
+message ipList {  
+  repeated Ip list = 1;  
+}
+
+message blockHash {
+  string hash = 1;
+}
+
+message blockData {
+  string data = 1;
+}
+
+message TransactionData {
+  string data = 1;
+}
+
+message transactionList {
+  repeated TransactionData list = 1;  
 }
