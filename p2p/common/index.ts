@@ -61,14 +61,22 @@ export default class p2pCommom extends p2pBase {
         await server.listen();
         const bootstrapList = await this.loadBootstrap();
         for(const bootstrap of bootstrapList) {
-            await this.joinNode(bootstrap)
+            try{
+                await this.joinNode(bootstrap)
+            } catch(err) {
+                console.warn(err.stack)
+            }
         }
         const selfIpList = this.getSelfIp();
         while(true) {
             for(const selfIp of selfIpList) {
                 const nodeIpList = await this.findNode(selfIp);
                 for(const nodeIp of nodeIpList) {
-                    await this.joinNode(nodeIp)
+                    try{
+                        await this.joinNode(nodeIp)
+                    } catch(err) {
+                        console.warn(err.stack)
+                    }
                 }
             }
         }
