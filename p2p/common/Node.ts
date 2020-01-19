@@ -7,12 +7,12 @@ export default class Node {
         return `bootstrap:list`;
     }
 
-    async setBootstrapData(bootstrapList:Array<string>):Promise<boolean> {
-        return await myStore.put(this.getBootstrapKey(), JSON.stringify(bootstrapList))
+    async setBootstrapData(bootstrapList:Set<string>):Promise<boolean> {
+        return await myStore.put(this.getBootstrapKey(), JSON.stringify([...bootstrapList]))
     }
 
-    async getBootstrapData():Promise<Array<string>> {
-        return JSON.parse(await myStore.get(this.getBootstrapKey()))
+    async getBootstrapData():Promise<Set<string>> {
+        return new Set(JSON.parse(await myStore.get(this.getBootstrapKey())))
     }
 
     async joinNode(ip:string):Promise<void> {

@@ -11,24 +11,24 @@ export default class p2pCommom extends p2pBase {
         return config;
     }
 
-    async loadBootstrap():Promise<Array<string>> {
-        const bootstrapList = await myNode.getBootstrapData();
-        bootstrapList.push(...config.defaultBootstrap);
-        return bootstrapList
+    async loadBootstrap():Promise<Set<string>> {
+        const bootstrapSet = await myNode.getBootstrapData();
+        config.defaultBootstrap.map(e=>{bootstrapSet.add(e)});
+        return bootstrapSet;
     }
 
     async ipIterator(ip:string , isReverse= false) {
         return await ipTool.ipIterator(ip, isReverse);
     }
 
-    async findNode(ip:string):Promise<Array<string>> {
-        const nodeList=[];
+    async findNode(ip:string):Promise<Set<string>> {
+        const nodeSet= new Set<string>(); 
         const ipRange = ipTool.getIpRange(ip,config.findNodeRange);
         await ipTool.eachIpByRange(ip,ipRange,async (ip)=>{
             await this.getClient().conect(ip);
-            nodeList.push(ip)
+            nodeSet.add(ip)
         })
-        return nodeList;
+        return nodeSet;
     }
     
     async joinNode(ip:string):Promise<void>{
@@ -43,33 +43,33 @@ export default class p2pCommom extends p2pBase {
         return myNode.getClient();
     }
 
-    getSelfIp():Array<string> {
+    getSelfIp():Set<string> {
         const networkData = networkInterfaces();
-        const ipList = []; 
+        const ipSet = new Set<string>(); 
         for(const networkCard of Object.values(networkData)) {
             for(const networkCardData of networkCard) {
                 if(config.invalidIpList.indexOf(networkCardData.address)===-1) {
-                    ipList.push(networkCardData.address)
+                    ipSet.add(networkCardData.address)
                 }
             }
         }
-        return ipList;
+        return ipSet;
     }
 
     async run():Promise<void> {
         const server = this.getServer();
         await server.listen();
-        const bootstrapList = await this.loadBootstrap();
-        for(const bootstrap of bootstrapList) {
+        const bootstrapSet = await this.loadBootstrap();
+        for(const bootstrap of bootstrapSet) {
             try{
                 await this.joinNode(bootstrap)
             } catch(err) {
                 console.warn(err.stack)
             }
         }
-        const selfIpList = this.getSelfIp();
+        const selfIpSet = this.getSelfIp();
         while(true) {
-            for(const selfIp of selfIpList) {
+            for(const selfIp of selfIpSet) {
                 const nodeIpList = await this.findNode(selfIp);
                 for(const nodeIp of nodeIpList) {
                     try{
