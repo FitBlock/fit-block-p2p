@@ -1,14 +1,20 @@
 import blockCore from 'fit-block-core';
 import Client from './Client';
 import Server from './Server';
+import config from './config';
 const myStore = blockCore.getStore()
 export default class Node {
     getBootstrapKey(): string {
         return `bootstrap:list`;
     }
 
-    async setBootstrapData(bootstrapList:Set<string>):Promise<boolean> {
-        return await myStore.put(this.getBootstrapKey(), JSON.stringify([...bootstrapList]))
+    async setBootstrapData(bootstrapSet:Set<string>):Promise<boolean> {
+        for(const invalidIp of config.invalidIpList) {
+            if(bootstrapSet.has(invalidIp)) {
+                bootstrapSet.delete(invalidIp)
+            }
+        }
+        return await myStore.put(this.getBootstrapKey(), JSON.stringify([...bootstrapSet]))
     }
 
     async getBootstrapData():Promise<Set<string>> {

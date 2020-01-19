@@ -15,6 +15,15 @@ export default class p2pClient {
             });
         })
     }
+    syncBootstrap():Promise<boolean> {
+        throw new Error('method not implement')
+    }
+    syncBlock():Promise<boolean> {
+        throw new Error('method not implement')
+    }
+    syncTransaction():Promise<boolean> {
+        throw new Error('method not implement')
+    }
     async isConect(): Promise<boolean> {
         return Boolean(this.client)
     }

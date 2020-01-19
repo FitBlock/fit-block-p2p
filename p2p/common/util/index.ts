@@ -1,4 +1,5 @@
 import ipParse from 'ip-parse';
+import config from '../config'
 class IpTool {
     isIpv6(ip:string):boolean {
         return ipParse.isIpv6(ip);
@@ -10,6 +11,10 @@ class IpTool {
             return ipDataStr.map(e=>parseInt(`0x${e}`));
         }
         return ipDataStr.map(e=>parseInt(e));
+    }
+
+    formatIp(ip:string):string {
+        return this.getIpByIpDate(this.getIpDateByIp(ip))
     }
     
     getIpByIpDate(ipData:Array<number>):string {
@@ -52,8 +57,8 @@ class IpTool {
     }
 
     getIpRange(ip:string, offset:number):Array<string> {
-        let minIp = this.isIpv6(ip)?'::':'0.0.0.0';
-        let maxIp = this.isIpv6(ip)?'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff':'255.255.255.255';
+        let minIp = this.isIpv6(ip)?config.minIpv6:config.minIpv4;
+        let maxIp = this.isIpv6(ip)?config.maxIpv6:config.maxIpv4;
         const ipData = this.getIpDateByIp(ip);
         const offsetIpByDataFuncName = this.getOffsetIpByDataFuncName(ip);
         const minIpData = this[offsetIpByDataFuncName](ipData, -offset);

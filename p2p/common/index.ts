@@ -13,7 +13,9 @@ export default class p2pCommom extends p2pBase {
 
     async loadBootstrap():Promise<Set<string>> {
         const bootstrapSet = await myNode.getBootstrapData();
-        config.defaultBootstrap.map(e=>{bootstrapSet.add(e)});
+        config.defaultBootstrap.map(ip=>{
+            bootstrapSet.add(ipTool.formatIp(ip))
+        });
         return bootstrapSet;
     }
 
@@ -26,7 +28,7 @@ export default class p2pCommom extends p2pBase {
         const ipRange = ipTool.getIpRange(ip,config.findNodeRange);
         await ipTool.eachIpByRange(ip,ipRange,async (ip)=>{
             await this.getClient().conect(ip);
-            nodeSet.add(ip)
+            nodeSet.add(ipTool.formatIp(ip))
         })
         return nodeSet;
     }
@@ -49,7 +51,7 @@ export default class p2pCommom extends p2pBase {
         for(const networkCard of Object.values(networkData)) {
             for(const networkCardData of networkCard) {
                 if(config.invalidIpList.indexOf(networkCardData.address)===-1) {
-                    ipSet.add(networkCardData.address)
+                    ipSet.add(ipTool.formatIp(networkCardData.address))
                 }
             }
         }
