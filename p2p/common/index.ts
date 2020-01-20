@@ -1,12 +1,12 @@
-import p2pBase from '../../types/p2pBase';
+import NodeBase from '../../types/NodeBase';
 import {networkInterfaces} from 'os';
 import {ipTool} from './util'
 import Client from './Client';
 import Server from './Server';
-import Node from './Node';
-const myNode = new Node();
+import {getNodeStoreInstance} from './NodeStore';
+const myNode = getNodeStoreInstance();
 import config from './config';
-export default class p2pCommom extends p2pBase {
+export default class NodeCommom extends NodeBase {
     getConfig() {
         return config;
     }
@@ -18,9 +18,8 @@ export default class p2pCommom extends p2pBase {
         });
         return bootstrapSet;
     }
-
-    async ipIterator(ip:string , isReverse= false) {
-        return await ipTool.ipIterator(ip, isReverse);
+    async keepBootstrap(newBootstrap:Set<string>):Promise<boolean> {
+        return await myNode.setBootstrapData(newBootstrap);
     }
 
     async findNode(ip:string):Promise<Set<string>> {
@@ -34,15 +33,37 @@ export default class p2pCommom extends p2pBase {
     }
     
     async joinNode(ip:string):Promise<void>{
-        await myNode.joinNode(ip)
+        const client = this.getClient()
+        await client.conect(ip)
+        const myBootstrap = await this.loadBootstrap();
+        const otherBootstrap = await client.exchangeBootstrap(myBootstrap);
+        await this.syncBootstrap(otherBootstrap)
+        //todo
+        // await this.syncBlock()
+        // await this.syncTransaction()
+    }
+
+    async syncBootstrap(otherBootstrap:Set<string>):Promise<void> {
+        const myBootstrap = await this.loadBootstrap();
+        for(const otherIp of otherBootstrap) {
+            myBootstrap.add(otherIp)
+        }
+        await this.keepBootstrap(myBootstrap)
+    }
+
+    syncBlock() {
+
+    }
+    syncTransaction() {
+
     }
 
     getServer():Server {
-        return myNode.getServer();
+        return new Server(this);;
     }
 
     getClient():Client {
-        return myNode.getClient();
+        return new Client(this);;
     }
 
     getSelfIp():Set<string> {
@@ -50,8 +71,9 @@ export default class p2pCommom extends p2pBase {
         const ipSet = new Set<string>(); 
         for(const networkCard of Object.values(networkData)) {
             for(const networkCardData of networkCard) {
-                if(config.invalidIpList.indexOf(networkCardData.address)===-1) {
-                    ipSet.add(ipTool.formatIp(networkCardData.address))
+                const formatAddress = ipTool.formatIp(networkCardData.address);
+                if(config.invalidIpList.indexOf(formatAddress)===-1) {
+                    ipSet.add(formatAddress)
                 }
             }
         }

@@ -1,4 +1,5 @@
 import config from './config'
+import NodeCommom from './index'
 import {join as pathJoin} from 'path';
 import {
     loadPackageDefinition as grpcLoadPackageDefinition,
@@ -7,6 +8,10 @@ import {
 import {loadSync as protoLoaderLoadSync} from '@grpc/proto-loader'
 export default class p2pClient {
     client: any;
+    node:NodeCommom;
+    constructor(node:NodeCommom) {
+        this.node = node;
+    }
     ping():Promise<boolean> {
         return new Promise((resolve,reject)=>{
             this.client.ping({ok: true}, (err, response)=> {
@@ -15,13 +20,24 @@ export default class p2pClient {
             });
         })
     }
-    syncBootstrap():Promise<boolean> {
+    async exchangeBootstrap(bootstrap:Set<string>):Promise<Set<string>> {
+        return new Promise((resolve,reject)=>{
+            const ipList = []
+            for(const ip of bootstrap) {ipList.push({ip});}
+            this.client.exchangeBootstrap({list: ipList}, (err, response)=> {
+                if(err){return reject(err)}
+                const newBootstrap = new Set<string>();
+                for(const ipObj of response.list) {
+                    newBootstrap.add(ipObj.ip)
+                }
+                return resolve(newBootstrap);
+            });
+        })
+    }
+    exchangeBlock():Promise<boolean> {
         throw new Error('method not implement')
     }
-    syncBlock():Promise<boolean> {
-        throw new Error('method not implement')
-    }
-    syncTransaction():Promise<boolean> {
+    exchangeTransaction():Promise<boolean> {
         throw new Error('method not implement')
     }
     async isConect(): Promise<boolean> {

@@ -1,9 +1,17 @@
 import blockCore from 'fit-block-core';
-import Client from './Client';
-import Server from './Server';
 import config from './config';
 const myStore = blockCore.getStore()
-export default class Node {
+export const getNodeStoreInstance = ( ()=> {
+    let instance = null;
+    return ():NodeStore=>{
+        if(instance) {
+            return instance;
+        }
+        instance = new NodeStore()
+        return instance
+    }
+})();
+export default class NodeStore {
     getBootstrapKey(): string {
         return `bootstrap:list`;
     }
@@ -20,22 +28,4 @@ export default class Node {
     async getBootstrapData():Promise<Set<string>> {
         return new Set(JSON.parse(await myStore.get(this.getBootstrapKey())))
     }
-
-    async joinNode(ip:string):Promise<void> {
-        const client = this.getClient()
-        await client.conect(ip)
-        //todo
-        // await client.syncBootstrap()
-        // await client.syncBlock()
-        // await client.syncTransaction()
-    }
-
-    getServer():Server {
-        return new Server();
-    }
-
-    getClient():Client {
-        return new Client();
-    }
-
 }

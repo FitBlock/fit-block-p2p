@@ -1,5 +1,6 @@
 
 import config from './config'
+import NodeCommom from './index'
 import {join as pathJoin} from 'path';
 import {
     loadPackageDefinition as grpcLoadPackageDefinition,
@@ -9,6 +10,10 @@ import {
 import {loadSync as protoLoaderLoadSync} from '@grpc/proto-loader'
 export default class p2pServer {
     server: grpcServer;
+    node:NodeCommom;
+    constructor(node:NodeCommom) {
+        this.node = node;
+    }
     async listen():Promise<boolean> {
         const p2pProto = pathJoin(config.appSrcPath,'p2p.proto');
         const packageDefinition = protoLoaderLoadSync(

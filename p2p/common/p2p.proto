@@ -4,9 +4,9 @@ package p2p;
 
 service P2p {
   rpc ping (isOk) returns (isOk) {}
-  rpc syncBootstrap (ipList) returns (ipList) {}
-  rpc syncBlock (blockHash) returns (blockData) {}
-  rpc syncTransaction(isOk) returns (transactionList) {}
+  rpc exchangeBootstrap (ipList) returns (ipList) {}
+  rpc exchangeBlock (blockHash) returns (blockData) {}
+  rpc exchangeTransaction(isOk) returns (transactionList) {}
 }
 
 message isOk {
