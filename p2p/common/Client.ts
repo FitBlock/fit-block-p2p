@@ -1,6 +1,8 @@
 import config from './config'
 import NodeCommom from './index'
 import {join as pathJoin} from 'path';
+import blockCore from 'fit-block-core';
+const myStore = blockCore.getStore()
 import {
     loadPackageDefinition as grpcLoadPackageDefinition,
     credentials
@@ -34,8 +36,13 @@ export default class p2pClient {
             });
         })
     }
-    exchangeBlock():Promise<boolean> {
-        throw new Error('method not implement')
+    exchangeBlock(blockHash:string):Promise<any> {
+        return new Promise((resolve,reject)=>{
+            this.client.exchangeBlock({hash:blockHash}, (err, response)=> {
+                if(err){return reject(err)}
+                return resolve(myStore.getBlockByStr(response.data))
+            });
+        })
     }
     exchangeTransaction():Promise<boolean> {
         throw new Error('method not implement')

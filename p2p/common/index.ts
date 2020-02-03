@@ -1,5 +1,6 @@
 import NodeBase from '../../types/NodeBase';
 import {networkInterfaces} from 'os';
+import blockCore from 'fit-block-core';
 import {ipTool} from './util'
 import Client from './Client';
 import Server from './Server';
@@ -38,8 +39,7 @@ export default class NodeCommom extends NodeBase {
         const myBootstrap = await this.loadBootstrap();
         const otherBootstrap = await client.exchangeBootstrap(myBootstrap);
         await this.syncBootstrap(otherBootstrap)
-        //todo
-        // await this.syncBlock()
+        await this.syncBlock()
         // await this.syncTransaction()
     }
 
@@ -51,8 +51,18 @@ export default class NodeCommom extends NodeBase {
         await this.keepBootstrap(myBootstrap)
     }
 
-    syncBlock() {
-
+    async syncBlock() {
+        const lastBlock = await blockCore.loadLastBlockData();
+        if(lastBlock.nextBlockHash==='') {
+            lastBlock.nextBlockHash = blockCore.getGodBlockHash()
+        }
+        const nextBlock = await this.getClient().exchangeBlock(lastBlock.nextBlockHash);
+        try {
+            await blockCore.acceptBlock(lastBlock, nextBlock)
+            await this.syncBlock()
+        } catch(err) {
+            console.warn(err.stack)
+        }
     }
     syncTransaction() {
 
