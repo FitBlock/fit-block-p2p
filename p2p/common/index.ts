@@ -1,6 +1,7 @@
 import NodeBase from '../../types/NodeBase';
 import {networkInterfaces} from 'os';
 import blockCore from 'fit-block-core';
+const myStore = blockCore.getStore()
 import {ipTool} from './util'
 import Client from './Client';
 import Server from './Server';
@@ -36,36 +37,48 @@ export default class NodeCommom extends NodeBase {
     async joinNode(ip:string):Promise<void>{
         const client = this.getClient()
         await client.conect(ip)
-        const myBootstrap = await this.loadBootstrap();
-        const otherBootstrap = await client.exchangeBootstrap(myBootstrap);
-        await this.syncBootstrap(otherBootstrap)
-        await this.syncBlock()
-        // await this.syncTransaction()
+        await this.syncBootstrap(client)
+        await this.syncBlock(client)
+        await this.syncTransaction(client)
     }
 
-    async syncBootstrap(otherBootstrap:Set<string>):Promise<void> {
+    async syncBootstrap(client:Client):Promise<void> {
         const myBootstrap = await this.loadBootstrap();
+        const otherBootstrap = await client.exchangeBootstrap(myBootstrap);
         for(const otherIp of otherBootstrap) {
             myBootstrap.add(otherIp)
         }
         await this.keepBootstrap(myBootstrap)
     }
 
-    async syncBlock() {
-        const lastBlock = await blockCore.loadLastBlockData();
+    async syncBlock(client:Client) {
+        let lastBlock = await blockCore.loadLastBlockData();
         if(lastBlock.nextBlockHash==='') {
-            lastBlock.nextBlockHash = blockCore.getGodBlockHash()
+            lastBlock = blockCore.getPreGodBlock()
         }
-        const nextBlock = await this.getClient().exchangeBlock(lastBlock.nextBlockHash);
         try {
-            await blockCore.acceptBlock(lastBlock, nextBlock)
-            await this.syncBlock()
+            do {
+                const nextBlock = myStore.getBlockByStr(
+                    await client.exchangeBlock(lastBlock.serialize())
+                )
+                await blockCore.acceptBlock(lastBlock, nextBlock)
+                if(nextBlock.nextBlockHash===''){break;}
+                myStore.keepBlockData(lastBlock, nextBlock);
+                lastBlock = nextBlock
+            } while(true)
         } catch(err) {
             console.warn(err.stack)
         }
+        // 查看尾链是否一致，不一致取最长链
+        const lastSdieBlock = myStore.getBlockByStr(
+            await client.exchangeLastBlock()
+        )
+        if(lastBlock.height>=lastSdieBlock.height){return;}
+        // todo
+        
     }
-    syncTransaction() {
-
+    syncTransaction(client:Client) {
+        // todo
     }
 
     getServer():Server {

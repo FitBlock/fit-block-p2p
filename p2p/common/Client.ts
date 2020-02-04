@@ -1,8 +1,6 @@
 import config from './config'
 import NodeCommom from './index'
 import {join as pathJoin} from 'path';
-import blockCore from 'fit-block-core';
-const myStore = blockCore.getStore()
 import {
     loadPackageDefinition as grpcLoadPackageDefinition,
     credentials
@@ -36,11 +34,19 @@ export default class p2pClient {
             });
         })
     }
-    exchangeBlock(blockHash:string):Promise<any> {
+    exchangeBlock(blockData:string):Promise<string> {
         return new Promise((resolve,reject)=>{
-            this.client.exchangeBlock({hash:blockHash}, (err, response)=> {
+            this.client.exchangeBlock({data:blockData}, (err, response)=> {
                 if(err){return reject(err)}
-                return resolve(myStore.getBlockByStr(response.data))
+                return resolve(response.data)
+            });
+        })
+    }
+    exchangeLastBlock():Promise<string> {
+        return new Promise((resolve,reject)=>{
+            this.client.exchangeLastBlock({ok:true}, (err, response)=> {
+                if(err){return reject(err)}
+                return resolve(response.data)
             });
         })
     }
