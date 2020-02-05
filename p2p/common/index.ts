@@ -38,7 +38,8 @@ export default class NodeCommom extends NodeBase {
         const client = this.getClient()
         await client.conect(ip)
         await this.syncBootstrap(client)
-        await this.syncBlock(client)
+        await this.syncBlock(client,myStore)
+        await this.syncLongestBlock(client)
         await this.syncTransaction(client)
     }
 
@@ -51,33 +52,46 @@ export default class NodeCommom extends NodeBase {
         await this.keepBootstrap(myBootstrap)
     }
 
-    async syncBlock(client:Client) {
+    async syncBlock(client:Client,nowStore) {
         let lastBlock = await blockCore.loadLastBlockData();
         if(lastBlock.nextBlockHash==='') {
             lastBlock = blockCore.getPreGodBlock()
         }
         try {
             do {
-                const nextBlock = myStore.getBlockByStr(
+                const nextBlock = nowStore.getBlockByStr(
                     await client.exchangeBlock(lastBlock.serialize())
                 )
                 await blockCore.acceptBlock(lastBlock, nextBlock)
                 if(nextBlock.nextBlockHash===''){break;}
-                myStore.keepBlockData(lastBlock, nextBlock);
+                nowStore.keepBlockData(lastBlock, nextBlock);
                 lastBlock = nextBlock
             } while(true)
         } catch(err) {
             console.warn(err.stack)
         }
-        // 查看尾链是否一致，不一致取最长链
-        const lastSdieBlock = myStore.getBlockByStr(
+        return lastBlock;
+    }
+
+    async syncLongestBlock(client:Client) {
+         // 查看尾链是否一致，不一致取最长链
+         let lastBlock = await blockCore.loadLastBlockData();
+         const lastSdieBlock = myStore.getBlockByStr(
             await client.exchangeLastBlock()
         )
-        if(lastBlock.height>=lastSdieBlock.height){return;}
-        // todo
-        
+        const nowVersion = await myStore.getVersion()
+        if(lastBlock.height>=lastSdieBlock.height){return nowVersion;}
+        const tmpVersion = myStore.genVersion();
+        const tmpStore = blockCore.getStore(tmpVersion);
+        const newVersionLastBlock = await this.syncBlock(client,tmpStore)
+        lastBlock = await blockCore.loadLastBlockData();
+        if(lastBlock.height<=newVersionLastBlock.height){return nowVersion;}
+        // 由于新版本链大于了老版本链，所以区块链变更
+        await myStore.setVersion(tmpVersion)
+        return tmpVersion;
     }
-    syncTransaction(client:Client) {
+
+    async syncTransaction(client:Client) {
         // todo
     }
 
