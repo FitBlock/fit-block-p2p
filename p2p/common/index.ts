@@ -73,7 +73,7 @@ export default class NodeCommom extends NodeBase {
         return lastBlock;
     }
 
-    async syncLongestBlock(client:Client) {
+    async syncLongestBlock(client:Client):Promise<string> {
          // 查看尾链是否一致，不一致取最长链
          let lastBlock = await blockCore.loadLastBlockData();
          const lastSdieBlock = myStore.getBlockByStr(
@@ -91,8 +91,25 @@ export default class NodeCommom extends NodeBase {
         return tmpVersion;
     }
 
-    async syncTransaction(client:Client) {
-        // todo
+    async syncTransaction(client:Client):Promise<boolean> {
+        if(
+            await myStore.getTransactionSignMapSize()>=
+            blockCore.getConfig().maxBlockTransactionSize
+        ) {
+            return false
+        }
+        const transactionSignDataList = await client.exchangeTransaction();
+        for(const transactionSignData of transactionSignDataList) {
+            let transactionSign = myStore.getTransactionSignByStr(transactionSignData);
+            try{
+                transactionSign = await blockCore.acceptTransaction(transactionSign)
+            } catch(err) {
+                continue;
+                console.warn(err)
+            }
+            myStore.keepTransactionSignData(transactionSign)
+        }
+        return true;
     }
 
     getServer():Server {

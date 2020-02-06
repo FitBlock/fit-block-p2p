@@ -50,8 +50,13 @@ export default class p2pClient {
             });
         })
     }
-    exchangeTransaction():Promise<boolean> {
-        throw new Error('method not implement')
+    exchangeTransaction():Promise<Array<string>> {
+        return new Promise((resolve,reject)=>{
+            this.client.exchangeTransaction({ok:true}, (err, response)=> {
+                if(err){return reject(err)}
+                return resolve(response.list.map(data=>data.data))
+            });
+        })
     }
     async isConect(): Promise<boolean> {
         return Boolean(this.client)
