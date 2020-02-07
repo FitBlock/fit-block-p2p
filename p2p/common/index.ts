@@ -2,26 +2,42 @@ import NodeBase from '../../types/NodeBase';
 import {networkInterfaces} from 'os';
 import blockCore from 'fit-block-core';
 const myStore = blockCore.getStore()
-import {ipTool} from './util'
+import {getIpToolInstance} from './IpTool'
+const ipTool = getIpToolInstance();
 import Client from './Client';
 import Server from './Server';
-import {getNodeStoreInstance} from './NodeStore';
-const myNode = getNodeStoreInstance();
 import config from './config';
 export default class NodeCommom extends NodeBase {
     getConfig() {
         return config;
     }
 
+    getBootstrapKey(): string {
+        return config.bootstrapKey;
+    }
+
+    async setBootstrapData(bootstrapSet:Set<string>):Promise<boolean> {
+        for(const invalidIp of config.invalidIpList) {
+            if(bootstrapSet.has(invalidIp)) {
+                bootstrapSet.delete(invalidIp)
+            }
+        }
+        return await myStore.put(this.getBootstrapKey(), JSON.stringify([...bootstrapSet]))
+    }
+
+    async getBootstrapData():Promise<Set<string>> {
+        return new Set(JSON.parse(await myStore.get(this.getBootstrapKey())))
+    }
+
     async loadBootstrap():Promise<Set<string>> {
-        const bootstrapSet = await myNode.getBootstrapData();
+        const bootstrapSet = await this.getBootstrapData();
         config.defaultBootstrap.map(ip=>{
             bootstrapSet.add(ipTool.formatIp(ip))
         });
         return bootstrapSet;
     }
     async keepBootstrap(newBootstrap:Set<string>):Promise<boolean> {
-        return await myNode.setBootstrapData(newBootstrap);
+        return await this.setBootstrapData(newBootstrap);
     }
 
     async findNode(ip:string):Promise<Set<string>> {
@@ -113,11 +129,11 @@ export default class NodeCommom extends NodeBase {
     }
 
     getServer():Server {
-        return new Server(this);;
+        return new Server(this);
     }
 
     getClient():Client {
-        return new Client(this);;
+        return new Client();
     }
 
     getSelfIp():Set<string> {

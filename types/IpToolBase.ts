@@ -1,6 +1,15 @@
 import ipParse from 'ip-parse';
-import config from '../config'
-class IpTool {
+const config = {
+    minIpv4:'0.0.0.0',
+    minIpv6:'0:0:0:0:0:0:0:0',
+    maxIpv4:'255.255.255.255',
+    maxIpv6:'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+}
+export default abstract class IpToolBase {
+    isIpv4(ip:string):boolean {
+        return ipParse.isIpv4(ip);
+    }
+
     isIpv6(ip:string):boolean {
         return ipParse.isIpv6(ip);
     }
@@ -73,8 +82,8 @@ class IpTool {
     }
 
     async eachIpByRange(ip:string,ipRange:Array<string>,callback:(ip:string)=>Promise<void>) {
-        const ipIterator = await ipTool.ipIterator(ip);
-        const ipIteratorReverse = await ipTool.ipIterator(ip, true);
+        const ipIterator = await this.ipIterator(ip);
+        const ipIteratorReverse = await this.ipIterator(ip, true);
         const ipIteratorFunc = async ()=>{
             for await (const ipValue of ipIterator) {
                 await callback(ipValue);
@@ -110,4 +119,3 @@ class IpTool {
         }
     }
 }
-export const ipTool =  new IpTool();

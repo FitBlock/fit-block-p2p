@@ -1,17 +1,13 @@
 import config from './config'
-import NodeCommom from './index'
 import {join as pathJoin} from 'path';
 import {
     loadPackageDefinition as grpcLoadPackageDefinition,
     credentials
 } from 'grpc'
 import {loadSync as protoLoaderLoadSync} from '@grpc/proto-loader'
-export default class p2pClient {
+import ClientBase from '../../types/ClientBase';
+export default class Client extends ClientBase {
     client: any;
-    node:NodeCommom;
-    constructor(node:NodeCommom) {
-        this.node = node;
-    }
     ping():Promise<boolean> {
         return new Promise((resolve,reject)=>{
             this.client.ping({ok: true}, (err, response)=> {
@@ -20,7 +16,7 @@ export default class p2pClient {
             });
         })
     }
-    async exchangeBootstrap(bootstrap:Set<string>):Promise<Set<string>> {
+    exchangeBootstrap(bootstrap:Set<string>):Promise<Set<string>> {
         return new Promise((resolve,reject)=>{
             const ipList = []
             for(const ip of bootstrap) {ipList.push({ip});}

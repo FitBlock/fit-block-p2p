@@ -9,10 +9,7 @@ export default {
         '127.0.0.1',
         'localhost',
     ],
-    minIpv4:'0.0.0.0',
-    minIpv6:'0:0:0:0:0:0:0:0',
-    maxIpv4:'255.255.255.255',
-    maxIpv6:'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+    bootstrapKey:'bootstrap:list',
     port:5587,
     maxNodeNumber: 1000,
     maxNodeTimeOut:30 * 1000, //30s
