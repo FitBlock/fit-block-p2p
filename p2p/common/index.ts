@@ -153,16 +153,16 @@ export default class NodeCommom extends NodeBase {
     async run():Promise<void> {
         const server = this.getServer();
         await server.listen();
-        const bootstrapSet = await this.loadBootstrap();
-        for(const bootstrap of bootstrapSet) {
-            try{
-                await this.joinNode(bootstrap)
-            } catch(err) {
-                console.warn(err.stack)
-            }
-        }
-        const selfIpSet = this.getSelfIp();
         while(true) {
+            const bootstrapSet = await this.loadBootstrap();
+            for(const bootstrap of bootstrapSet) {
+                try{
+                    await this.joinNode(bootstrap)
+                } catch(err) {
+                    console.warn(err.stack)
+                }
+            }
+            const selfIpSet = this.getSelfIp();
             for(const selfIp of selfIpSet) {
                 const nodeIpList = await this.findNode(selfIp);
                 for(const nodeIp of nodeIpList) {
