@@ -5,7 +5,7 @@
         "outDir": "./build/"
     },
     "include": [
-        "db/**/*",
+        "p2p/**/*",
         "types/**/*",
         "test/**/*",
         "p2pFactory.ts",
