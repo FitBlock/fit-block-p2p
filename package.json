@@ -1,6 +1,6 @@
 {
   "name": "fit-block-p2p",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "FitBlock's p2p component。",
   "main": "build/index.js",
   "directories": {
