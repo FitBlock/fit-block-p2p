@@ -124,8 +124,8 @@ export default class NodeCommom extends NodeBase {
             try{
                 transactionSign = await blockCore.acceptTransaction(transactionSign)
             } catch(err) {
-                continue;
                 console.warn(err)
+                continue;
             }
             myStore.keepTransactionSignData(transactionSign)
         }
