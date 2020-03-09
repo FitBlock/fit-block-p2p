@@ -7,6 +7,7 @@ const ipTool = getIpToolInstance();
 import Client from './Client';
 import Server from './Server';
 import config from './config';
+import { sleep } from './util';
 export default class NodeCommom extends NodeBase {
     getConfig() {
         return config;
@@ -165,6 +166,7 @@ export default class NodeCommom extends NodeBase {
         while(true) {
             const bootstrapSet = await this.loadBootstrap();
             for(const bootstrap of bootstrapSet) {
+                await sleep(100)
                 try{
                     await this.joinNode(bootstrap)
                 } catch(err) {
@@ -173,6 +175,7 @@ export default class NodeCommom extends NodeBase {
             }
             const selfIpSet = this.getSelfIp();
             for(const selfIp of selfIpSet) {
+                await sleep(100)
                 const nodeIpList = await this.findNode(selfIp);
                 for(const nodeIp of nodeIpList) {
                     try{
