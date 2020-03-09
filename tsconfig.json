@@ -8,6 +8,7 @@
         "p2p/**/*",
         "types/**/*",
         "test/**/*",
+        "dev/**/*",
         "p2pFactory.ts",
         "index.ts"
     ]

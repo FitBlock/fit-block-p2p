@@ -26,7 +26,12 @@ export default class NodeCommom extends NodeBase {
     }
 
     async getBootstrapData():Promise<Set<string>> {
-        return new Set(JSON.parse(await myStore.get(this.getBootstrapKey())))
+        try{
+            return new Set(JSON.parse(await myStore.get(this.getBootstrapKey())))
+        } catch(err) {
+            console.warn(err)
+            return new Set()
+        }
     }
 
     async loadBootstrap():Promise<Set<string>> {
