@@ -10,7 +10,7 @@
     "prepare": "npx tsc",
     "build": "npx tsc",
     "test": "node ./build/test/index",
-    "dev": "node ./build/dev/index"
+    "dev": "node ./build/dev/index --dev"
   },
   "repository": {
     "type": "git",
@@ -32,12 +32,14 @@
   "homepage": "https://github.com/FitBlock/fit-block-p2p#readme",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.3",
-    "fit-block-core": "^1.2.7",
+    "fit-block-core": "^1.2.9",
     "grpc": "^1.24.2",
-    "ip-parse": "^1.0.5"
+    "ip-parse": "^1.0.5",
+    "log4js": "^6.1.2"
   },
   "devDependencies": {
-    "typescript": "^3.7.4",
-    "@types/node": "^12.12.14"
+    "@types/log4js": "^2.3.5",
+    "@types/node": "^12.12.14",
+    "typescript": "^3.7.4"
   }
 }

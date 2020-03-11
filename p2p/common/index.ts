@@ -4,6 +4,8 @@ import blockCore from 'fit-block-core';
 const myStore = blockCore.getStore()
 import {getIpToolInstance} from './IpTool'
 const ipTool = getIpToolInstance();
+import {getLoggerInstance} from './Logger'
+const logger = getLoggerInstance().getLogger()
 import Client from './Client';
 import Server from './Server';
 import config from './config';
@@ -30,7 +32,8 @@ export default class NodeCommom extends NodeBase {
         try{
             return new Set(JSON.parse(await myStore.get(this.getBootstrapKey())))
         } catch(err) {
-            console.warn(err)
+            logger.warn(err)
+            await myStore.put(this.getBootstrapKey(), JSON.stringify([]))
             return new Set()
         }
     }
@@ -54,7 +57,7 @@ export default class NodeCommom extends NodeBase {
                 await this.getClient().conect(ip);
                 nodeSet.add(ipTool.formatIp(ip))
             } catch(err) {
-                console.warn(err.stack)
+                logger.warn(err.stack)
             }    
         })
         return nodeSet;
@@ -94,7 +97,7 @@ export default class NodeCommom extends NodeBase {
                 lastBlock = nextBlock
             } while(true)
         } catch(err) {
-            console.warn(err.stack)
+            logger.warn(err.stack)
         }
         return lastBlock;
     }
@@ -130,7 +133,7 @@ export default class NodeCommom extends NodeBase {
             try{
                 transactionSign = await blockCore.acceptTransaction(transactionSign)
             } catch(err) {
-                console.warn(err)
+                logger.warn(err)
                 continue;
             }
             myStore.keepTransactionSignData(transactionSign)
@@ -170,9 +173,10 @@ export default class NodeCommom extends NodeBase {
                 try{
                     await this.joinNode(bootstrap)
                 } catch(err) {
-                    console.warn(err.stack)
+                    logger.warn(err.stack)
                 }
             }
+            
             const selfIpSet = this.getSelfIp();
             for(const selfIp of selfIpSet) {
                 // await sleep(100)
@@ -181,7 +185,7 @@ export default class NodeCommom extends NodeBase {
                     try{
                         await this.joinNode(nodeIp)
                     } catch(err) {
-                        console.warn(err.stack)
+                        logger.warn(err.stack)
                     }
                 }
             }
