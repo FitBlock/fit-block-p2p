@@ -4,8 +4,7 @@ import blockCore from 'fit-block-core';
 const myStore = blockCore.getStore()
 import {getIpToolInstance} from './IpTool'
 const ipTool = getIpToolInstance();
-import {getLoggerInstance} from './Logger'
-const logger = getLoggerInstance().getLogger()
+const logger = blockCore.getLogger()
 import Client from './Client';
 import Server from './Server';
 import config from './config';
