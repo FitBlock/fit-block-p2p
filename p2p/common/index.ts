@@ -51,9 +51,11 @@ export default class NodeCommom extends NodeBase {
     async findNode(ip:string):Promise<Set<string>> {
         const nodeSet= new Set<string>(); 
         const ipRange = ipTool.getIpRange(ip,config.findNodeRange);
+        const client = this.getClient()
         await ipTool.eachIpByRange(ip,ipRange,async (ip)=>{
             try{
-                await this.getClient().conect(ip);
+                await client.conect(ip);
+                await client.ping();
                 nodeSet.add(ipTool.formatIp(ip))
             } catch(err) {
                 logger.warn(err.stack)

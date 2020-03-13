@@ -5,6 +5,16 @@ import {
     credentials
 } from 'grpc'
 import {loadSync as protoLoaderLoadSync} from '@grpc/proto-loader'
+const p2pProto = pathJoin(config.appSrcPath,'p2p.proto');;
+const packageDefinition = protoLoaderLoadSync(
+    p2pProto,
+    {keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+    });
+const p2p_proto = grpcLoadPackageDefinition(packageDefinition).p2p;
 import ClientBase from '../../types/ClientBase';
 export default class Client extends ClientBase {
     client: any;
@@ -58,16 +68,6 @@ export default class Client extends ClientBase {
         return Boolean(this.client)
     }
     async conect(ip:string): Promise<boolean> {
-        const p2pProto = pathJoin(config.appSrcPath,'p2p.proto');;
-        const packageDefinition = protoLoaderLoadSync(
-            p2pProto,
-            {keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-            });
-        const p2p_proto = grpcLoadPackageDefinition(packageDefinition).p2p;
         this.client = new p2p_proto['P2p'](
             `${ip}:${config.port}`,
             credentials.createInsecure()
