@@ -5,4 +5,7 @@ async function run() {
     await storeServer.listen()
     await fitBlockP2p.run()
 }
-run();
+run().catch((err)=>{
+    console.log(err.stack)
+});
+

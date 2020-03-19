@@ -10,7 +10,8 @@
     "prepare": "npx tsc",
     "build": "npx tsc",
     "test": "node ./build/test/index",
-    "dev": "node ./build/dev/index --dev"
+    "dev": "node ./build/dev/index --dev",
+    "dev:mining": "node ./build/dev/mining --dev"
   },
   "repository": {
     "type": "git",
