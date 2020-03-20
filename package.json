@@ -11,7 +11,8 @@
     "build": "npx tsc",
     "test": "node ./build/test/index",
     "dev": "node ./build/dev/index --dev",
-    "dev:mining": "node ./build/dev/mining --dev"
+    "dev:mining": "node ./build/dev/mining --dev",
+    "dev:join": "node ./build/dev/join --dev"
   },
   "repository": {
     "type": "git",
