@@ -12,7 +12,8 @@
     "test": "node ./build/test/index",
     "dev": "node ./build/dev/index --dev",
     "dev:mining": "node ./build/dev/mining --dev",
-    "dev:join": "node ./build/dev/join --dev"
+    "dev:join": "node ./build/dev/join --dev",
+    "dev:wait": "node ./build/dev/wait --dev"
   },
   "repository": {
     "type": "git",
