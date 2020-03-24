@@ -13,7 +13,8 @@
     "dev": "node ./build/dev/index --dev",
     "dev:mining": "node ./build/dev/mining --dev",
     "dev:join": "node ./build/dev/join --dev",
-    "dev:wait": "node ./build/dev/wait --dev"
+    "dev:wait": "node ./build/dev/wait --dev",
+    "dev:clear": "node ./build/dev/clear --dev"
   },
   "repository": {
     "type": "git",
