@@ -1,14 +1,16 @@
 import fitBlockP2p from '../index';
 import fitBlockStore from 'fit-block-store'
+import fitBlockCore from 'fit-block-core'
+const logger = fitBlockCore.getLogger()
 async function run() {
     const storeServer = fitBlockStore.getServer();
     await storeServer.listen();
-    console.log(`storeServer start`)
+    process.stdout.write(`storeServer start\n`)
     const p2pServer = fitBlockP2p.getServer();
     await p2pServer.listen();
-    console.log(`p2pServer start`)
+    process.stdout.write(`p2pServer start\n`)
 }
 
 run().catch((err)=>{
-    console.log(err.stack)
+    logger.log(err.stack)
 })

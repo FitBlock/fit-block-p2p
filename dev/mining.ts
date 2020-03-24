@@ -1,5 +1,6 @@
 import fitBlockStore from 'fit-block-store'
 import fitBlockCore from 'fit-block-core'
+const logger = fitBlockCore.getLogger()
 
 async function mining(lastBlock, walletAdress) {
     const myStore = fitBlockCore.getStore()
@@ -27,10 +28,10 @@ async function run() {
     let lastBlock = await fitBlockCore.loadLastBlockData()
     for(let i=0;i<n;i++) {
         lastBlock = await mining(lastBlock, walletAdress)
-        console.log(`out block：`,lastBlock)
+        logger.log(`out block：`,lastBlock)
     }
     await storeServer.close()
 }
 run().catch((err)=>{
-    console.log(err.stack)
+    logger.log(err.stack)
 })

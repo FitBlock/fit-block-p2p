@@ -87,9 +87,10 @@ export default class NodeCommom extends NodeBase {
         if(lastBlock.nextBlockHash==='') {
             lastBlock = blockCore.getPreGodBlock()
         }
+        let nextBlock = blockCore.getPreGodBlock()
         try {
             do {
-                const nextBlock = nowStore.getBlockByStr(
+                nextBlock = nowStore.getBlockByStr(
                     await client.exchangeBlock(lastBlock.serialize())
                 )
                 await blockCore.acceptBlock(lastBlock, nextBlock)
@@ -99,6 +100,8 @@ export default class NodeCommom extends NodeBase {
             } while(true)
         } catch(err) {
             logger.warn(err.stack)
+            logger.warn(`preBlock,lastBlock:${lastBlock.serialize()}`)
+            logger.warn(`nextBlock:${nextBlock.serialize()}`)
         }
         return lastBlock;
     }

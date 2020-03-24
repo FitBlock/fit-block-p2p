@@ -1,5 +1,7 @@
 import fitBlockP2p from '../index';
 import fitBlockStore from 'fit-block-store'
+import fitBlockCore from 'fit-block-core';
+const logger = fitBlockCore.getLogger()
 async function run() {
     let ipList = []
     for(const arg of process.argv) {
@@ -9,7 +11,7 @@ async function run() {
             break;
         }
     }
-    console.log(ipList)
+    logger.log(ipList)
     if(ipList.length<=0){
         throw new Error('not add ip argument,expleam ip=192.168.1.10 or ip=192.168.1.10,192.168.1.11')
     }
@@ -20,5 +22,5 @@ async function run() {
     }
 }
 run().catch((err)=>{
-    console.log(err.stack)
+    logger.log(err.stack)
 });
