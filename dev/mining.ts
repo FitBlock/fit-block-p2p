@@ -1,5 +1,6 @@
 import fitBlockStore from 'fit-block-store'
 import fitBlockCore from 'fit-block-core'
+import {getArgs,getOneArg} from './command';
 const logger = fitBlockCore.getLogger()
 
 async function mining(lastBlock, walletAdress) {
@@ -16,7 +17,21 @@ async function mining(lastBlock, walletAdress) {
 }
 
 async function run() {
-    const n = 3;
+    let n = 3;
+    let isInit = true;
+    let countStr = getOneArg('count');
+    if(countStr!=='') {
+        n = parseInt(countStr)
+    }
+    let initStr = getOneArg('init');
+    if(initStr!=='') {
+        try{
+            isInit = JSON.parse(initStr)
+        } catch(err) {
+            return logger.error(`init params error,can't be '${initStr}',only init=true or init=false`)
+        }
+    }
+    console.log(n,isInit)
     const walletAdress =  fitBlockCore.getWalletAdressByPublicKey(
         fitBlockCore.getPublicKeyByPrivateKey(
             fitBlockCore.genPrivateKeyByString('123456')
@@ -24,7 +39,9 @@ async function run() {
     );
     const storeServer = fitBlockStore.getServer();
     await storeServer.listen()
-    fitBlockCore.keepGodBlockData(await fitBlockCore.genGodBlock())
+    if(isInit) {
+        fitBlockCore.keepGodBlockData(await fitBlockCore.genGodBlock())
+    }
     let lastBlock = await fitBlockCore.loadLastBlockData()
     for(let i=0;i<n;i++) {
         lastBlock = await mining(lastBlock, walletAdress)
