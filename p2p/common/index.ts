@@ -91,14 +91,14 @@ export default class NodeCommom extends NodeBase {
         let i=1;
         try {
             do {
-                logger.warn(`${i}:preBlock,lastBlock:${lastBlock.serialize()}`)
-                logger.warn(`${i}:nextBlock:${nextBlock.serialize()}`)
                 nextBlock = nowStore.getBlockByStr(
                     await client.exchangeBlock(lastBlock.serialize())
                 )
                 await blockCore.acceptBlock(lastBlock, nextBlock)
                 if(nextBlock.nextBlockHash===''){break;}
                 nowStore.keepBlockData(lastBlock, nextBlock);
+                logger.warn(`${i}:preBlock,lastBlock:${lastBlock.serialize()}`)
+                logger.warn(`${i}:nextBlock:${nextBlock.serialize()}`)
                 lastBlock = nextBlock
                 i++;
             } while(true)
