@@ -84,7 +84,7 @@ export default class NodeCommom extends NodeBase {
 
     async syncBlock(client:Client,nowStore) {
         let lastBlock = await blockCore.loadLastBlockData();
-        if(lastBlock.nextBlockHash==='') {
+        if(lastBlock.nextBlockHash==='' || lastBlock.nextBlockHash===undefined) {
             lastBlock = blockCore.getPreGodBlock()
         }
         let nextBlock = blockCore.getPreGodBlock()
