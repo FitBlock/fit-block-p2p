@@ -10,8 +10,9 @@ async function run() {
         logger.log(`clear:${key}`)
         await myStore.del(key)
     }
-    await myStore.del(myStore.getGodKey())
-    logger.log(`clear:${myStore.getGodKey()}`)
+    const godKey = await myStore.getBlockDataKey(myStore.getPreGodBlock())
+    await myStore.del(godKey)
+    logger.log(`clear:${godKey}`)
     await storeServer.close()
 }
 run().catch((err)=>{
