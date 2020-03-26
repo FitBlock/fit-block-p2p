@@ -90,6 +90,8 @@ export default class NodeCommom extends NodeBase {
         let nextBlock = blockCore.getPreGodBlock()
         try {
             do {
+                logger.warn(`preBlock,lastBlock:${lastBlock.serialize()}`)
+                logger.warn(`nextBlock:${nextBlock.serialize()}`)
                 nextBlock = nowStore.getBlockByStr(
                     await client.exchangeBlock(lastBlock.serialize())
                 )
@@ -100,8 +102,6 @@ export default class NodeCommom extends NodeBase {
             } while(true)
         } catch(err) {
             logger.warn(err.stack)
-            logger.warn(`preBlock,lastBlock:${lastBlock.serialize()}`)
-            logger.warn(`nextBlock:${nextBlock.serialize()}`)
         }
         return lastBlock;
     }
