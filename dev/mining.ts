@@ -42,7 +42,8 @@ async function run() {
     if(isInit) {
         fitBlockCore.keepGodBlockData(await fitBlockCore.genGodBlock())
     }
-    let lastBlock = await fitBlockCore.loadLastBlockData()
+    const myStore = fitBlockCore.getStore()
+    let lastBlock = await fitBlockCore.loadLastBlockData(myStore.getPreGodBlock())
     logger.log(`lastBlock：`,lastBlock)
     for(let i=0;i<n;i++) {
         lastBlock = await mining(lastBlock, walletAdress)
