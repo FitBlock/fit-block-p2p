@@ -31,7 +31,7 @@ async function run() {
             return logger.error(`init params error,can't be '${initStr}',only init=true or init=false`)
         }
     }
-    console.log(n,isInit)
+    logger.log(`count=${n} init=${isInit}`)
     const walletAdress =  fitBlockCore.getWalletAdressByPublicKey(
         fitBlockCore.getPublicKeyByPrivateKey(
             fitBlockCore.genPrivateKeyByString('123456')
